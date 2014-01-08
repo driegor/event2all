@@ -1,0 +1,39 @@
+<div id="data">
+	<ul class="thumbnails">
+		<% _.each( posts, function(post){ %>
+			<li id="play" class="span3">
+				<div class="thumbnail plain">
+					<h5><%=post.userName%></h5>
+					<img id="<%=post.id%>"  src="<%=post.medium%>"  height="150" alt=""/>
+					<p><%=post.title %><br/>
+					<%=post.content.comments.length%> <i class="icon-comment"></i>
+				</div>
+			</li>
+			<%if (post.content){%>
+				<div class="media" id="comments_<%=post.id%>" style="display:none;">
+					<h5>Comentarios</h5><br>
+					<div class="pull-right">
+					<a class="grouped_elements" rel="group1" data-fancybox-type="iframe" href="<%=post.image%>" title="">
+  						<img class="media-object" src="<%=post.image%>"  height="350" alt="...">
+					</a>
+				    </div>
+				  	<%if (post.content.comments && post.content.comments.length > 0 ){%>
+				  		<div class="media-body"  style="overflow:auto; height:500px;">
+				  			<% _.each( post.content.comments, function(comment ){ %>
+					  		<div class="col-lg-4 well" style="margin-left:10px !important; width: 300px;margin-right: 10px; padding: 4px !important;">
+								<h5><%=comment.user?comment.user.name:""%></h5>
+								<font style="font-style:italic;"><%=comment.content%></font></div>
+							<%});%>
+					  	</div>
+				  	<%}%>
+				</div>
+			<%}%>
+		<% }); %>
+	</ul>
+</div> 
+
+<div id="controls-wrapper" class="load-item">
+	<div id="controls">
+		<a id="play-button"><img id="pauseplay" src="img/play.png"/></a>
+	</div>
+</div>

@@ -1,0 +1,92 @@
+<div class="row">
+
+    <form id="form" class="form-horizontal span12">
+
+
+        <fieldset>
+
+            <legend>Detalle del Evento</legend>
+            <br/>
+
+            <div class="row">
+                <div class="span9">
+
+                    <div class="control-group">
+                        <label for="id" class="control-label">Id:</label>
+                        <div class="controls">
+                            <input id="id" name="id" type="text" value="<%= event.id === null ? '' : event.id %>" class="span3"
+                                   disabled/>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="name" class="control-label">Nombre:</label>
+                        <div class="controls">
+                            <input type="text" id="name"  class="span6"  name="name" value="<%= event.name %>"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="description" class="control-label">Descripción:</label>
+                        <div class="controls">
+                            <textarea id="description" name="description" class="span6" rows="6"><%=event.description%></textarea>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+                    
+                     <div class="control-group">
+                        <label for="date" class="control-label">Fecha:</label>
+                        <div class="controls">
+	                        <input  id="date" name="date" type="text" class="span2" value="<%= event.date%>" placeholder="dd/mm/yyyy">
+							<span class="help-inline"></span>
+						</div>
+                    </div>
+                    
+                    <div class="control-group">
+                    	<label for="token" class="control-label">Invitación:</label>
+	                    <div class="controls">
+				            <input type="text" id="token" name="token" value="<%= event.token?event.token:"" %>" disabled />
+		                	<a href="#" class="btn btn-primary btn-small" id="genToken"><i class="icon-white icon-refresh"></i></a>
+		                </div>
+	                </div>
+	                
+                </div>
+                
+                <div class="span3">
+                    <div class="well">
+                    	<p>Imagen del evento</p> 
+                    	<% var thumbUrl=event.image?baseUrl+"/"+event.image.files[0].url:"img/no-photo.jpg"%>
+                    	<% var bigUrl=event.image?baseUrl+"/"+event.image.files[1].url:"img/no-photo.jpg"%>
+                    	<p><a id="mainImgUrl" href="<%=bigUrl%>" id="thumbImage" data-fancybox-type="iframe"><img id="mainImgThumb"  width="180" src="<%=thumbUrl%>" class="img-thumbnail"/></a></p>
+                        <div style="position:relative;">
+							<a class='btn btn-primary' href='javascript:;'>
+								<span>Cambiar imagen...</span>
+								<input type="file" id="fileToUpload" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="file_source" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
+							</a>
+							<img src="./img/ajax-loader.gif" id="loading-indicator" style="display:none"/>
+						</div>
+                    </div>
+                </div>
+          </div>
+        
+        </fieldset>
+
+        <div class="form-actions">
+            <a href="#" class="btn btn-primary save">Guardar</a>
+            <a href="#" class="btn cancel">Volver</a>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="row status-bar">
+    <div class="span12">
+        <div class="alert alert-success" style="display: none">
+            <b>Ok!</b>Los datos del evento se han guardado correctamente.
+        </div>
+    </div>
+</div>
+
+

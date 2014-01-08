@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+    <defaultCache
+                maxElementsInMemory="50"
+                eternal="false"
+                overflowToDisk="false"
+                memoryStoreEvictionPolicy="LFU" />
+ 
+      <cache name="token" eternal="false" maxElementsInMemory="100"
+            overflowToDisk="false" diskPersistent="false"
+            timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" />
+</ehcache>

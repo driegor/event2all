@@ -1,0 +1,820 @@
+
+<!DOCTYPE html> 
+<html>
+	<head>
+	    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+	   	<meta name="apple-mobile-web-app-capable" content="yes">
+	  	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	  	
+	  
+	  	<!--Css de terceros -->
+	  	<link rel="stylesheet" href="http://www.photoswipe.com/latest/photoswipe.css" />       
+		<!--JqueryMobile-->
+	  	<link rel="stylesheet" type="text/css" href="libs/jquery.mobile/jquery.mobile-1.3.2.css"/>
+	  	<!--Controles de fechas-->
+	  	<link rel="stylesheet" type="text/css" href="libs/datebox/jqm-datebox.min.css"/> 
+			
+		<!--Css específicos de la aplicación -->
+		<link rel="stylesheet" type="text/css" href="css/custom.css"/>
+		
+		<!--Scripts de terceros -->
+		<script src="libs/jquery-1.10.2.js"></script>
+		<script src="libs/jquery.scrollTo-min.js"></script>
+		<!--Configuración de jquery mobile-->
+		<script src="libs/jqm-config.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.3.2.js"></script>
+		<script src="libs/cordova-2.9.0.js"></script>
+		<!--Controles de fechas-->
+		<script src="libs/datebox/jqm-datebox.core.min.js"></script>
+		<script src="libs/datebox/jqm-datebox.mode.calbox.min.js"></script>
+		<script src="libs/datebox/jquery.mobile.datebox.i18n.es-ES.utf8.js"></script>
+		<!--Librería para la gestión de fechas-->
+		<script src="libs/moment-with-langs.min.js"></script>
+		<!--Gestor de plantillas-->	
+		<script src="libs/underscore.js"></script>   
+		<!--Backbone-->	
+		<script src="libs/backbone.js"></script>
+		<script src="libs/backbone-relational.js"></script>
+		<!--Serialización de formularios-->
+		<script src="libs/formparams.js"></script>
+		<!--Carga diferida de imagenes-->
+		<script src="libs/jquery.krioImageLoader.js"></script>
+		<!--Mensajes-->
+		<link href="libs/toastr.min.css" rel="stylesheet"/>
+		<script src="libs/toastr.min.js"></script>
+	 	<!--Galeria-->
+        <script src="libs/klass.min.js"></script>            
+        <script src="libs/code.photoswipe.jquery-3.0.4.min.js"></script>     
+	  	
+	
+		<!--Scripts específicos de la aplicación -->
+		<!--Configuración de la aplicación-->
+		<script src="js/config.js"></script>
+		<!--Hack para el uso de websockets android-->
+		<script src="libs/websockets.js"></script>
+		<script src="js/utils.js"></script>
+		<script src="js/phoneGap.js"></script>
+		<!--Vistas,models y rutas genericas-->
+		<script src="js/backBoneExtend.js"></script>
+		<!--Modelos de la aplicación-->
+		<script src="js/models.js"></script>
+		<!--Vistas de la aplicación-->
+		<script src="js/views/events.js"></script>
+		<script src="js/views/users.js"></script>
+		<script src="js/views/images.js"></script>
+		<script src="js/views/posts.js"></script>
+		<!--Rutas-->
+		<script src="js/router.js"></script>
+		<!--js principal-->
+		<script src="js/main.js"></script>
+		<title>Eventual</title>
+	 	<script type="text/javascript" charset="utf-8">
+	 	
+	 
+	    	//sólo iniciamos phonegap si estamos en un emulador o en un móvil real
+	    	if (eventual.config.mode==='mobile'){
+	    		eventual.phoneGapUtils.init();
+	 		}
+	    </script>
+	    <!--PLANTILLAS-->
+	    
+	    <!--ACCIÓN BORRAR GENERICO POPUP TEMPLATE-->
+	    
+	 	<script type="text/template" id="delete-generic-template">    
+	 		<h3><%=message.question%></h3>
+			<p><em><%=message.item2delete%></em></p>
+			<p>Esta acción no se podrá deshacer</p>
+			<a href="#delete" id="delete" data-role="button" data-theme="b" id="delete">Eliminar</a>       
+			<a href="#" data-role="button" id="cancel" data-theme="c" >Cancelar</a> 
+		</script>
+		
+		<!--LISTADO DE EVENTOS TEMPLATE-->
+		
+	 	<script type="text/template" id="events-search-template">    
+			<div data-role="header" id="header">
+				<h2>Eventos</h2>
+			    <a href="#events/add" data-icon="add" id="add-event-button">Añadir</a>
+			</div>
+			<div data-role="content">
+				<ul id="autocompleteSearch" data-role="listview" data-inset="true" data-theme="a" data-count-theme="b" data-filter="true" data-filter-reveal="false" data-filter-placeholder="Buscar un evento..." data-filter-theme="b">
+					<% _.each( events, function( event ){ %>
+					<li>
+						<% var imgUrl=event.image?baseUrl+"/"+event.image.files[0].url:"images/no-photo.jpg"%>
+		 	        	<a href="#events/<%= event.id %>/posts">
+							<img src="<%=imgUrl%>"/>
+							<h1><%=event.name%></h1>
+							<p><%=event.date%></p></br></br>
+							<p><strong><%=event.description%></strong></p>
+							<span class="ui-li-count"><%=event.postsCount+event.imagesCount%> posts</span>
+						</a>
+					</li>
+					<% }); %>
+				</ul>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  		data-icon="grid" class="ui-btn-active">Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"	data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		</script>
+		
+		<!--BUSCAR USUARIOS TEMPLATE-->
+		
+		
+		<script type="text/template" id="users-search-template">    
+		 	
+			<div data-role="header" id="header">
+				<a href="#" data-role="button" data-icon="back" id="back" class="ui-btn-left">Volver</a>
+			   	<h1>Usuarios</h1>
+			</div>
+			<div data-role="content">
+				<ul id="autocompleteSearch" data-role="listview" data-inset="true" data-count-theme="b" data-theme="a" data-filter="true" data-filter-reveal="false" data-filter-placeholder="Buscar un usuario..." data-filter-theme="b">
+					<% _.each( users, function( user ){ %>
+					<li>
+						<% var imgUrl=user.image?baseUrl+"/"+user.image.files[0].url:"images/no-user.jpg"%>
+		 	        	<a href="#add-user" id="add-user" data-id=<%=user.id%>>
+							<img src="<%=imgUrl%>"/>
+							<h1><%=user.name%></h1><p><%=user.status%></p>
+						</a>
+					</li>
+					<% }); %>
+				</ul>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#events"  	data-icon="grid" class="ui-btn-active">Tu eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"  data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		</script>
+		
+		<!--FORMULARIO EVENTO TEMPLATE-->
+		
+		<script type="text/template" id="event-form-template">
+    		
+	    		<div data-role="header" id="header">
+					<a href="#" data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        	<a href="#" data-icon="check" data-theme="b" id="save" class="ui-btn-right">Guardar</a>
+		        	<h1>Evento</h1>
+		 		</div>
+		    	<div data-role="content" id="event-form-content" data-theme="a">
+		        	<form id="form" action="#">
+						<div>
+							<div data-role="fieldcontain">
+		         				<label for="name">Nombre</label>
+								<input type="text"  data-mini="true" name="name" id="name"  data-mini="true" placeholder="Nombre" value="<%= name %>"/>
+								<span id="name_error" style="color:RED"></span>
+							</div>
+							<div data-role="fieldcontain">
+		         				<label for="description">Descripción</label>
+			    				<textarea data-mini="true"  name="description" id="description" data-mini="true"  placeholder="Descripción"><%= description %></textarea>
+								<span id="description_error" style="color:RED"></span>	
+							</div>
+							<div data-role="fieldcontain">
+								<label for="date">Fecha</label>
+								<input  name="date" id="date" value="<%=moment(new Date(date)).format('DD/MM/YYYY')%>" type="text" data-role="datebox" data-options='{"mode":"calbox", "useNewStyle":true}' />	
+								<span id="date_error" style="color:RED"></span>
+							</div>
+						</div>
+						<div>
+						    <div>
+						        <div id="alert" style="color:RED">
+						          
+						        </div>
+						    </div>
+						</div>
+					</form>
+		 		</div>
+
+    		<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#events"  data-icon="grid" class="ui-btn-active">Tu eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile" on="slide" data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		</script>
+		
+		<!--FORMULARIO USUARIO TEMPLATE-->
+		
+		<script type="text/template" id="user-form-template">
+    		
+	    		<div data-role="header" id="header">
+					<a href="#" data-icon="back" id="back" class="back ui-btn-left">Volver</a>
+					<a href="#" data-icon="check" data-theme="b" id="save" class="ui-btn-right">Guardar</a>
+		        	<h1><%= name %></h1>
+		 		</div>
+				<div data-role="content" id="event-form-content" data-theme="a">
+		        	<form id="form" action="#">
+						<div>
+							<div data-role="fieldcontain">
+		         				<label for="name">Nombre</label>
+								<input type="text"  data-mini="true" name="name" id="name"  data-mini="true" placeholder="Nombre" value="<%= name %>" required  />
+								<span id="name_error" style="color:RED"></span>
+							</div>
+							<div data-role="fieldcontain">
+		         				<label for="name">Mail</label>
+								<input type="text"  data-mini="true" name="mail" id="mail"  data-mini="true" placeholder="Mail" value="<%= mail %>" required  <% if (id) {%>class="ui-disabled"<%} %> />
+								<span id="mail_error" style="color:RED"></span>
+							</div>
+							<div data-role="fieldcontain">
+		         				<label for="name">Password</label>
+								<input type="password"  data-mini="true" name="password" id="password"  data-mini="true" placeholder="Password" value="<%= password %>" required  />
+								<span id="password_error" style="color:RED"></span>							
+							</div>
+							<%if (id){%>
+								<div data-role="fieldcontain">
+									<div class="ui-grid-a">
+										<div class="ui-block-a" style="width:50%">Datos de sesión</div>	   
+										<div class="ui-block-b" style="width:50%">
+											<button type="button" id="clearCredentials" data-theme="f">Logout</button>
+										</div>	   
+									</div>
+									<div>
+										<div id="alert" style="color:RED"/>
+									</div>
+								</div>
+							<%}%>
+					</form>
+		 		</div>
+				<div data-role="footer" data-position="fixed">
+					<div data-role="navbar" data-iconpos="bottom">
+						<ul>
+							<li><a href="#events" data-icon="grid" >Tu eventos</a></li>
+							<li><a href="#promo"   data-icon="start" >Invitaciones</a></li>
+							<li><a href="#"  data-icon="gear">Perfil</a></li>
+						</ul>
+					</div><!-- /navbar -->
+				</div><!-- /footer -->
+    	</script>
+		
+    	<!--DETALLE EVENTO TEMPLATE-->
+    	
+		<script type="text/template" id="event-details-template">    
+        	 <% var owner=(event.ownerId===eventual.auth.getData("user").replace(/"/g, ''));%>
+			 <% var disabled=(!owner)?"class='ui-disabled'":"";%> 						
+		      <div data-role="header" id="header">
+				<a href="#" data-role="button" data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        <a href="#events/<%=event.id %>/edit""," data-role="button" data-theme="b" data-icon="arrow-b" id="edit-event-button" <%=disabled%> class="ui-btn-right">Modificar</a>
+		        <h1>Detalles del evento</h1>
+		      </div>
+		      <div data-role="content" id="event-details-content" data-theme="a">
+			  		<div data-role="fieldcontain">
+						<div class="ui-grid-a">
+							<div class="ui-block-a" style="width:45%">
+								<div>
+									<% if (owner) {%>
+									<p>Toca para modificar</p>
+									<a href="#event/<%=event.id%>/add-image">
+										<% var imgUrl=event.image?baseUrl+"/"+event.image.files[1].url:"images/no-photo.jpg"%>
+										<img id="image" src="<%=imgUrl%>" alt="image" width=150px>
+									</a>
+									<% }else{%>
+										<% var imgUrl=event.image?baseUrl+"/"+event.image.files[1].url:"images/no-photo.jpg"%>
+										<img id="image" src="<%=imgUrl%>" alt="image" width=150px>
+									<% }%>
+								</div>
+							</div>
+							<div class="ui-block-b" style="width:55%">
+								<div data-role="fieldcontain">
+									<ul data-role="listview" id="event-fields" data-inset="true">
+			        					<li><%=event.name %></li>
+										<li><p><%= event.description %></p></li>
+			        				</ul>
+									<p>Fecha <%=event.date%></p>
+			        			</div>	
+							</div>
+						</div>
+
+						<div data-role="collapsible-set">
+							<div data-role="collapsible" data-collapsed-icon="arrow-r" data-theme="b" data-content-theme="c">
+								<h3>Información</h3>
+								<ul data-role="listview" data-inset="true" data-theme="d" data-count-theme="b">
+									<li>
+									<% if (event.imagesCount>0) {%>										
+										<a href="#events/<%=event.id%>/images"><h1>Imágenes</h1><div class="ui-li-count"><%=event.imagesCount%></div></a></li>
+									<% }else{%>
+										<a href="#prevent"><h1>Imágenes</h1><div class="ui-li-count"><%=event.imagesCount%></div></a></li>
+									<% }%>
+								</ul>
+								<fieldset>
+									<div class="ui-block-a" style="width:60%">
+										
+									</div>
+									
+								</fieldset>
+							</div>
+						</div>
+						
+						<div data-role="collapsible-set">
+							<div data-role="collapsible" data-collapsed-icon="arrow-r" data-theme="b" data-content-theme="c"  data-collapsed="false">
+								<h3>Participantes</h3>
+								<% if (owner) {%>
+									<div align="left">
+										<a href="#events/<%= event.id %>/users2join" id="add-event-2-user" data-icon="plus" data-role="button" data-mini="true" data-iconpos="notext" data-theme="b" >Añadir usuario</a>
+									</div>
+								<% }%>
+							
+								<ul id="eventList" data-role="listview" data-inset="true" data-count-theme="b">
+								<% _.each( event.users, function( user ){ %>
+									<li>
+										<a href="#" id="nothing">
+											<% var imgUrl=user.image?baseUrl+"/"+user.image.files[0].url:"images/no-user.jpg"%>
+											<img src="<%=imgUrl%>"/>
+											<h1><%=user.name%></h1><p><%=user.status%></p>
+											<% if (user.id===event.ownerId) {%>
+												<p style="color:RED">Admin</p>
+											<% } %>
+										</a>
+										<% if ((user.id!==event.ownerId && owner)) {%>
+											<a href="#showDeleteDialog" id="showDeleteDialog" data-icon="delete" data-theme="f" data-id=<%=user.id%>>Borrar</a>
+										<% } %>
+									</li>
+								<% }); %>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="delete-user-dialog"  data-role="dialog" >
+					<div data-role="header" data-theme="a" data-position="inline">
+					<h1>Dialog</h1>
+					<div data-role="content" data-theme="b">
+						<h3>¿Quieres eliminar el usuario seleccionado del evento?</h3>
+						<p><em></em></p>
+						<p>Mira que si lo borras la has liado parda</p>
+						<a href="#delete-user" id="delete-user" data-role="button" data-theme="a" id="delete-event">Eliminar</a>       
+						<a href="#" data-role="button"  data-theme="b" >Cancelar</a> 
+					</div>
+				</div>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#events"  data-icon="grid" class="ui-btn-active">Tu eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile" data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+	   </script>
+	   
+	   <!--DETALLE USUARIO TEMPLATE-->
+	   
+	   <script type="text/template" id="user-details-template">    
+	   		  <% var imgUrl=user.image?baseUrl+"/"+user.image.files[1].url:"images/no-user.jpg"%>
+		      <div data-role="header" id="header">
+				<a href="#" data-role="button" data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        <a href="#users/<%=user.id %>/edit" data-role="button" data-theme="b" data-icon="arrow-b" id="edit-event-button" class="ui-btn-right">Modificar</a>
+		        <h1><%= user.name %></h1>
+		      </div>
+		      <div data-role="content" id="event-details-content" data-theme="a">
+			  		<div data-role="fieldcontain">
+						<div class="ui-grid-a">
+							<div class="ui-block-a" style="width:45%">
+								<div>
+									<a href="#user/<%=user.id%>/add-image">
+										<img id="image" src="<%=imgUrl%>" alt="image" width=150px>
+									</a><p>Toca para modificar</p>
+								</div>
+							</div>
+							<div class="ui-block-b" style="width:55%">
+								<div data-role="fieldcontain">
+									<ul data-role="listview" id="event-fields" data-inset="true">
+			        					<li><h1><%= user.name %></h1></li>
+										<li><h1><%= user.mail %></h1></li>
+			        				</ul>
+								</div>	
+							</div>
+						</div>
+					</div>
+				</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#events" data-icon="grid" class="ui-btn-active">Tu eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#prevent" id="prevent"  data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		
+	   </script>
+	   
+	   <!--POST DE IMAGENES TEMPLATE-->
+	   	   
+	   <script type="text/template" id="post-image-form-template">
+	    		<div data-role="header" id="header">
+					<a href="#" data-role="button" data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        	<a href="#" data-role="submit" data-icon="check" data-theme="b" id="post" class="ui-btn-right">Guardar</a>
+		        	<h1>Enviar Imagen</h1>
+		 		</div>
+		    	<div data-role="content" id="image-form-content" data-theme="a">
+		        	<form id="form" action="#" enctype="multipart/form-data" method="post">
+						<div>
+							<div data-role="fieldcontain">
+		         				<label for="description">Descripción</label>
+			    				<textarea data-mini="true"  name="description" id="description" data-mini="true"  placeholder="Descripción..." ></textarea>
+								<span id="description_error" style="color:RED"></span>
+							</div>
+							<div data-role="fieldcontain">
+								<% if (eventual.config.mode==='mobile'){%>
+									<label for="pick">Selecciona la imagen</label>
+									<button type="button" id="pick" data-theme="b" data-mini="true" data-icon="check">Galeria</button>
+									<button type="button" id="takePicture" data-theme="b" data-mini="true" data-icon="check">Cámara</button>
+								<%}else{%>
+									<label for="fileToUpload">Selecciona la imagen</label>
+									<input type="file" id="fileToUpload"/>
+								<%}%>
+         				 	</div>							
+							<div data-role="fieldcontain">
+								<div class="ui-grid-a">
+						        	<div class="ui-block-a">
+						            	<label for="filesInfo">Previsualización</label>
+						            </div>
+						            <div class="ui-block-b">
+										<div data-role="content" id="filesInfo">
+									</div>
+						    	</div>
+							</div>
+						</div>
+					</form>
+		 		</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#events"  data-icon="grid" class="ui-btn-active">Tu eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"         data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+
+    	</script>
+
+    	<!--FORMULARIO NUEVA IMAGEN PARA EVENTO/USUARIO TEMPLATE-->
+    	 <script type="text/template" id="add-image-form-template">
+	    		<div data-role="header" id="header">
+					<a href="#"  data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        	<a href="#"  data-icon="check" data-theme="b" id="add" class="ui-btn-right">Guardar</a>
+		        	<h1>Añadir nueva imagen</h1>
+		 		</div>
+		    	<div data-role="content" id="image-form-content" data-theme="a">
+		        	<form id="form" action="#" enctype="multipart/form-data" method="post">
+						<div>
+							<div data-role="fieldcontain">
+								<label for="pick">Selecciona la imagen</label>
+         				 		<% if (eventual.config.mode==='mobile'){%>
+									<button type="button" id="pick" data-theme="b" data-mini="true" data-icon="check">Galeria</button>
+									<button type="button" id="takePicture" data-theme="b" data-mini="true" data-icon="check">Cámara</button>
+								<%}else{%>
+									<input type="file" id="fileToUpload"/>
+								<%}%>
+  							</div>							
+							<div data-role="fieldcontain">
+								<div class="ui-grid-a">
+						        	<div class="ui-block-a">
+						            	<label for="filesInfo">Previsualización</label>
+						            </div>
+						            <div class="ui-block-b">
+										<div data-role="content" id="filesInfo">
+									</div>
+						    	</div>
+							</div>
+						</div>
+					</form>
+		 		</div>
+			
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  data-icon="grid" class="ui-btn-active">Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"         data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+    	</script>
+    	
+    	<!--LISTADO DE POSTS TEMPLATE-->
+    	
+    	<script type="text/template" id="post-list-template">    
+		 	
+			<div data-role="header" data-position="fixed" id="header">
+				<a href="#"  data-icon="back" id="back" class="back ui-btn-left">Volver</a>
+				<a href="#events/<%=eventId%>/show"  data-icon="gear" data-theme="b" id="info" class="ui-btn-right">Info</a>
+			   	<h1>Posts</h1>
+			</div>
+			<div data-role="content">
+				<span id="anchor"><%=posts.length%></span> Posts
+				<ul id="postList" data-role="listview" data-inset="true">
+					<% _.each( posts, function( post ){ %>
+					<li><% var imgUrl=(post.user && post.user.image)?baseUrl+"/"+post.user.image.files[0].url:"images/no-user.jpg"%>
+						<img style="margin-left: 8px;margin-top:10px;width=45px" alt="sample" src="<%=imgUrl%>"/>
+						<%=post.user?post.user.name:""%><br><br>
+						<p>
+							<%var text=post.postEnum!=="COMMENTED_PICTURES"?post.content:post.content.description;%>
+							<font style="font-style:italic;">
+			    				<%=text%>
+			    			</font>
+						</p>
+						<div data-role="content">
+							<div>
+								<% _.each( post.content.images, function(image,index){ %>
+								<div>
+								   	<a data-inline="true"
+								     	href="#events/<%=eventId%>/images"><img height="150" src="<%=baseUrl%>/<%=image.files[1].url%>" alt="Image" />
+									</a>
+								</div>	
+								<% }); %>
+	 						</div>	
+						</div>
+						<div>
+							<p><%=post.postTime%>
+									<%if (post.postEnum==="COMMENTED_PICTURES"){%>
+										<a style="text-decoration: none" href="#events/<%=eventId%>/post/<%=post.id%>">
+											<span style="color:#08298A">| <%=post.content.comments.length%>
+												<%if (post.content.comments.length===1){%>
+													comentario											
+												<%}else{%>
+													comentarios	
+												<%}%>			
+											</span>
+										</a>							
+									<%}%>
+							</p>
+						</div>
+					</li>
+					<% }); %>
+				</ul>
+			</div>
+			<div data-role="footer" data-position="fixed" id="footer">
+				<fieldset class="ui-grid-c">
+					<div class="ui-block-a"  style="width:10%" >
+						<a href="#events/<%= eventId %>/post-image" id="addPostImage" data-icon="camera" data-theme="b" data-role="button" data-mini="true" data-iconpos="notext" ></a>
+					</div>	 
+					<div class="ui-block-b" style="width:50%">
+						<textarea  name="post" id="post" data-mini="true"  placeholder="Nuevo post..." required ></textarea>
+					</div>
+					<div class="ui-block-c" style="width:40%;display:none" id="addPost">
+						<button type="button" id="addPost" data-theme="b" data-mini="true" data-icon="check">Enviar</button>
+					</div>	   
+				</fieldset>
+				
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  data-icon="grid" >Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"        on="slide" data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+		
+			</div><!-- /footer -->
+		</script>
+		
+		<!--NUEVO POST ITEM TEMPLATE-->
+		
+		<script type="text/template" id="posts-new-post-template">    
+				<% var imgUrl=(post.user && post.user.image)?baseUrl+"/"+post.user.image.files[0].url:"images/no-user.jpg"%>
+				<img style="margin-left: 8px;margin-top:10px;width=45px" alt="sample" src="<%=imgUrl%>"/>
+				<%=post.user?post.user.name:""%><br><br>
+				<p>
+					<%var text=post.postEnum!=="COMMENTED_PICTURES"?post.content:post.content.description%>
+					<font style="font-style:italic;">
+			    		<%=text%><br><br>
+			    	</font>
+				</p>
+				<div data-role="content">
+					<div>
+						<% _.each( post.content.images, function(image,index){ %>
+						<div>
+							<a   data-inline="true"
+							   	href="#events/<%=eventId%>/images"><img src="<%=baseUrl%>/<%=image.files[1].url%>" alt="Image" />
+						  	</a>
+						</div>	
+						<% }); %>
+	 				</div>	
+				</div>
+				<div>
+					<p><%=post.postTime%></p>
+						<%if (post.postEnum==="COMMENTED_PICTURES" && post.content.comments.length>0){%>
+							<a style="text-decoration: none" href="#events/<%=eventId%>/post/<%=post.id%>">
+								<span style="color:#08298A">| <%=post.content.comments.length%>
+								<%if (post.content.comments.length===1){%>
+									comentario											
+								<%}else{%>
+									comentarios	
+								<%}%>			
+								</span>
+							</a>							
+						<%}%>
+				</div>
+		</script>
+    	
+		<!--COMMENTARIOS DE UN POST TEMPLATE-->
+		
+    	<script type="text/template" id="comments-template">    
+		 	
+			<div data-role="header" data-position="fixed">
+				<a href="#"  data-icon="back" id="back" class="back ui-btn-left">Volver</a>
+				<h1>Comentarios</h1>
+			</div>
+			
+			<div data-role="content" id="event-details-content" data-theme="a" id="image-form-content">
+				<div id="gallery">
+					<% _.each( post.content.images, function(image,index){ %>
+					<div>
+						<a href="<%=baseUrl%>/<%=image.files[2].url%>" >
+							<img src="<%=baseUrl%>/<%=image.files[1].url%>" alt="<%=post.content.description%>"/>
+						</a>
+					</div>	
+					<% }); %>
+	 			</div>
+				<div>
+					<fieldset class="ui-grid-a">
+						<div class="ui-block-a" style="width:65%">
+							<div data-role="fieldcontain">
+								<textarea data-mini="true"  name="comments" id="comments" data-mini="true"  placeholder="Nuevo comentario..."></textarea>
+							</div>
+						</div>
+						<div class="ui-block-b" style="width:35%;display:none" id="addComment">
+							<button type="button" data-theme="b" data-icon="check" data-mini="true">Enviar</button>
+						</div>	   
+					</fieldset>
+				</div>
+				<div data-role="collapsible-set">
+					<div data-role="collapsible" data-collapsed-icon="arrow-r" data-theme="b" data-content-theme="c"  data-collapsed="false">
+					<h3>Comentarios</h3>
+						<div data-role="content">
+							<ul id="postList" data-role="listview" data-inset="true">
+							<% _.each( post.content.comments, function(comment ){ %>
+								<li><% var imgUrl=(comment.user && comment.user.image)?baseUrl+"/"+comment.user.image.files[0].url:"images/no-user.jpg"%>
+									<img style="margin-left: 8px;margin-top:10px;width=45px" alt="sample" src="<%=imgUrl%>"/>
+									<%=post.user?comment.user.name:""%><br><br>
+									<p>
+										<%var text=comment.content%>
+										<font style="font-style:italic;">
+											<%=text%><br><br>
+										</font>
+									</p>
+									<div>
+										<p><%=comment.postTime%></p>
+									</div>
+								</li>
+							<% }); %>
+							</ul>
+						</div>
+					</div>
+				</div>
+	 		</div>
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  data-icon="grid" class="ui-btn-active">Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"         data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		</script>
+		
+		<!--NUEVO COMENTARIO ITEM TEMPLATE-->
+		
+		<script type="text/template" id="comment-new-item-template">    
+				<% var imgUrl=(comment.user && comment.user.image)?baseUrl+"/"+comment.user.image.files[0].url:"images/no-user.jpg"%>
+				<img style="margin-left: 8px;margin-top:10px;width=45px" alt="sample" src="<%=imgUrl%>"/>
+				<%=comment.user?comment.user.name:""%><br><br>
+				<p><%var text=comment.content%>
+					<font style="font-style:italic;">
+						<%=text%><br><br>
+					</font>
+				</p>
+				<div>
+					<p><%=comment.postTime%></p>
+				</div>
+		</script>
+		
+		
+		<!--LISTADO DE IMAGENES TEMPLATE-->
+    	
+    	<script type="text/template" id="images-list-template">    
+		 	
+			<div data-role="header" data-position="fixed" id="header">
+				<a href="#"  data-icon="back" id="back" class="back ui-btn-left">Volver</a>
+				<a href="#events/<%=eventId%>/show"  data-icon="gear" data-theme="b" id="info" class="ui-btn-right">Info</a>
+			   	<h1>Images</h1>
+			</div>
+			<div data-role="content">
+				<div class="ui-grid-a" id="gallery">
+					<% _.each( images, function( commentedImage,index ){ %>
+						<%var divType=index%2==0?'a':'b'%>		
+						<div class="ui-block-<%=divType%>">
+							<% _.each( commentedImage.content.images, function(image){ %>
+								<div style="border-top:1px solid #e4e4e4">
+									<br>
+									<a href="<%=baseUrl%>/<%=image.files[2].url%>" id="link"><img height="100"  src="<%=baseUrl%>/<%=image.files[0].url%>" alt="<%=commentedImage.content.description%>" /></a>
+																
+										<a style="text-decoration: none" href="#events/<%=eventId%>/post/<%=commentedImage.id%>">									
+										<span style="color:#08298A"><br><%=commentedImage.content.comments.length%>
+										<%if (commentedImage.content.comments.length===1){%>
+											comentario											
+										<%}else{%>
+											comentarios	
+										<%}%>			
+										</span>
+										</a>
+									
+								</div>
+							<% }); %>	
+						</div>
+					<% }); %>
+	 			</div>
+			</div>
+			<div data-role="footer" data-position="fixed" id="footer">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  data-icon="grid" >Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"        on="slide" data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+			</div><!-- /footer -->
+		</script>
+		
+		
+		<!--LOGIN TEMPLATE-->
+		
+		<script type="text/template" id="login-template">    
+			<div data-theme="a" class="ui-corner-all">
+				<form id ="form">
+					<div style="padding:10px 20px;">
+					  <h3>Login</h3>
+			          <label for="un" class="ui-hidden-accessible">eMail</label>
+			          <input type="text" name="mail" id="mail" value="<%=mail%>" placeholder="Introduce mail..." data-theme="a" />
+			          <span id="mail_error" style="color:RED"></span>
+			          <label for="pw" class="ui-hidden-accessible">Password</label>
+			          <input type="password" name="password" id="password" value="<%=password%>" placeholder="Introduce password..." data-theme="a" />
+			          <span id="password_error" style="color:RED"></span>
+			    	  <button type="button" id="save" data-theme="b">Login</button>
+					  <button type="button" id="createUser" data-theme="b">Nuevo usuario</button>
+					</div>
+				</form>
+			</div>
+		</script>
+		
+		
+		<!--FORMULARIO NUEVA PROMOCIÓN TEMPLATE-->
+    	 <script type="text/template" id="add-promo-form-template">
+	    		<div data-role="header" id="header">
+					<a href="#"  data-icon="back" id="back" class="ui-btn-left">Volver</a>
+		        	<a href="#"  data-icon="check" data-theme="b" id="save" class="ui-btn-right">Guardar</a>
+		        	<h1>Invitación</h1>
+		 		</div>
+		    	<div data-role="content" id="image-form-content" data-theme="a">
+		        	<form id="form" action="#"  method="post">
+						<div>
+							<div data-role="fieldcontain">
+								<label for="token">Código</label>
+         				 		<input type="text" name="token" id="token" value="<%=token%>" placeholder="Introduce código invitación" data-theme="a" />
+  								<span id="token_error" style="color:RED"></span>
+  							</div>							
+						</div>
+					</form>
+		 		</div>
+			
+				<div data-role="footer" data-position="fixed" id="footer">
+				<div data-role="navbar" data-iconpos="bottom">
+					<ul>
+						<li><a href="#"  data-icon="grid" >Tus eventos</a></li>
+						<li><a href="#promo"	data-icon="star" >Invitaciones</a></li>
+						<li><a href="#profile"        on="slide" data-icon="gear">Perfil</a></li>
+					</ul>
+				</div><!-- /navbar -->
+				</div><!-- /footer -->
+    	</script>
+		
+		
+	</head>
+  	
+	<!-- Contenido dinámica generado por backbone-->
+	<body>
+  		<div id="backbone-dynamic-content" data-role="page" data-theme="c"></div>
+  		
+  		<div id="backbone-dynamic-dialog" data-role="dialog" data-dom-cache="true" data-theme="d" data-close-btn="none">
+  			<div data-role="header" data-theme="a" >
+				<h1>Eliminar datos</h1>
+			</div>
+			<div data-role="content" id="backbone-dynamic-dialog-content" data-theme="d"></div>
+		</div>
+  	</body>
+</html>

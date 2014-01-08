@@ -1,0 +1,38 @@
+<div class="row">
+    <form id="form" class="form-horizontal span12">
+        <fieldset>
+            <legend>Login</legend>
+            <br/>
+            <div class="row">
+                <div class="span9">
+                     <div class="control-group">
+                        <label for="mail" class="control-label">Mail:</label>
+                        <div class="controls">
+                            <input type="text" id="mail" name="mail" value="<%= user.mail %>"/>
+                            <span class="help-inline" id="mail_error"></span>
+                        </div>
+                    </div>
+                    
+                <div class="control-group">
+                        <label for="password" class="control-label">Password:</label>
+                        <div class="controls">
+                            <input type="password" id="password" name="password" value="<%=user.password %>"/>
+                            <span class="help-inline" id="password_error"></span>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </fieldset>
+        <div class="form-actions">
+            <a href="#" class="btn btn-primary save">Login</a>
+        </div>
+    </form>
+</div>
+
+<div class="row status-bar">
+    <div class="span12">
+        <div class="alert alert-success" style="display: none" id="alert">
+            
+        </div>
+    </div>
+</div>

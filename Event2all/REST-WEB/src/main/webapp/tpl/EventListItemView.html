@@ -1,0 +1,20 @@
+<a href="#events/<%= event.id %>" class="thumbnail plain">
+	<% var imgUrl=event.image?baseUrl+"/"+event.image.files[1].url:"img/no-photo.jpg"%>
+    <h5><%=event.name %></h5><br/>
+    <img height="150" src="<%= imgUrl %>"  alt="<%=event.name%>" title="<%=event.name%>">
+    <div style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="<%=event.description %>"><p><%=event.description %></p></div>
+    <i class="icon-calendar"></i><%=event.date%>
+</a>
+
+<%if (event.imagesCount){%>
+	<a href="#events/<%= event.id %>/images" class="thumbnail plain">
+		<%=event.imagesCount%> <i class="icon-picture"></i>
+	</a>
+<%}else{%>
+	<div class="thumbnail plain">
+	<%=event.imagesCount%> <i class="icon-picture"></i>
+	<div>
+<%}%>
+
+
+

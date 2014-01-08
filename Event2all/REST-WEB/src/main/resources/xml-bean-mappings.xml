@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+	http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <!--Event -->
+	<mapping>
+		<class-a>org.uoc.pfc.eventual.model.Event</class-a>
+		<class-b>org.uoc.pfc.eventual.utils.integration.dto.EventDTO</class-b>
+		<field custom-converter="org.uoc.pfc.eventual.utils.integration.converter.ObjectIdConverter">
+			<a>id</a>
+		    <b>id</b>
+		</field>
+		<field custom-converter="org.uoc.pfc.eventual.utils.integration.converter.ImageConverter">
+			<a>image</a>
+		    <b>image</b>
+		</field>
+		<field-exclude>
+		    <a>posts</a>
+		    <b>posts</b>
+		</field-exclude>
+		
+	</mapping>
+	<!--User -->
+	<mapping>
+		<class-a>org.uoc.pfc.eventual.model.User</class-a>
+		<class-b>org.uoc.pfc.eventual.utils.integration.dto.UserDTO</class-b>
+		<field custom-converter="org.uoc.pfc.eventual.utils.integration.converter.ObjectIdConverter">
+			<a>id</a>
+		    <b>id</b>
+		</field>
+		<field custom-converter="org.uoc.pfc.eventual.utils.integration.converter.ImageConverter">
+			<a>image</a>
+		    <b>image</b>
+		</field>
+		<!-- No debe viajar el password del usuario del servidor al cliente -->
+		<!-- field-exclude>
+		     <a>password</a>
+		     <b>password</b>
+		</field-exclude -->
+	</mapping>
+</mappings>
